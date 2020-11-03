@@ -1,0 +1,285 @@
+
+--------------------------REQUETES SQL---------------------------
+
+-----------------------------------------------------------------------------------------
+pour afficher les different role d'un utilisateur rechercher par son identifiant et login
+-----------------------------------------------------------------------------------------
+select * 
+from utilisateur
+left join chef
+on chef.utilisateur_id = utilisateur.id
+left join client
+on client.utilisateur_id = utilisateur.id
+left join livreur
+on livreur.utilisateur_id = utilisateur.id
+where utilisateur.login = 'login4' and utilisateur.identifiant = 'identifiant4'
+
+
+liste des livreurs :
+---------------------
+SELECT utilisateur.id, utilisateur.prenom, utilisateur.nom
+FROM utilisateur
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+
+------------------------------------------------
+liste des utilisateurs qui sont client et chef :
+------------------------------------------------
+SELECT utilisateur.id, utilisateur.prenom, utilisateur.nom
+FROM utilisateur
+INNER JOIN client
+ON utilisateur.id = client.utilisateur_id
+INNER JOIN chef
+ON utilisateur.id = chef.utilisateur_id
+
+liste des utilisateurs qui sont client et livreur :
+---------------------------------------------
+SELECT utilisateur.id, utilisateur.prenom, utilisateur.nom
+FROM utilisateur
+INNER JOIN client
+ON utilisateur.id = client.utilisateur_id
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+
+liste des utilisateurs qui sont chef et livreur :
+------------------------------------------------
+SELECT utilisateur.id, utilisateur.prenom, utilisateur.nom
+FROM utilisateur
+INNER JOIN chef
+ON utilisateur.id = chef.utilisateur_id
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+
+
+liste des utilisateur qui sont client et chef et livreur :
+-----------------------------------------------------------
+SELECT utilisateur.id, utilisateur.prenom, utilisateur.nom
+FROM utilisateur
+INNER JOIN chef
+ON utilisateur.id = chef.utilisateur_id
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+INNER JOIN client
+ON utilisateur.id = client.utilisateur_id
+
+nom du menu du 2020-10-04
+-----------------------------------------
+SELECT nom
+FROM menuDuJour
+WHERE date = "2020-10-04"
+
+liste des plats du menu du 2020-10-04
+-----------------------------------------
+SELECT plat.nom
+FROM plat
+INNER JOIN lignePlatMenuDuJour
+ON plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+WHERE menuDuJour.date = "2020-10-04"
+
+les plats et le menu de la commande n°8
+-------------------------------------------
+SELECT plat.nom, menuDuJour.nom
+FROM plat
+INNER JOIN lignePlatCommande
+ON plat.id = lignePlatCommande.plat_id
+INNER JOIN commande
+ON lignePlatCommande.commande_id = commande.id
+INNER JOIN lignePlatMenuDuJour
+on plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+WHERE commande.id=8
+
+les plats avec leurs quantité et le menu de la commande en date du 2020-10-04
+-----------------------------------------------------------------------------
+SELECT plat.nom AS plat, lignePlatCommande.quantite AS quantité, menuDuJour.nom AS menu
+FROM plat
+INNER JOIN lignePlatCommande
+ON plat.id = lignePlatCommande.plat_id
+INNER JOIN commande
+ON lignePlatCommande.commande_id = commande.id
+INNER JOIN lignePlatMenuDuJour
+on plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+WHERE commande.date = "2020-10-04"
+
+-----------------------
+les plats avec leurs quantité et le menu de la commande en date du 2020-10-04 avec le nom-prenom du livreur
+ATTENTION ICI ON AFFICHE QUE LES COMMANDE OU UN LIVREUR A ETE ATTRIBUER (donc si une commande a cette date a un "livreur" a "null" la commande ne sera pas afficher)
+-----------------------
+SELECT plat.nom AS plat, lignePlatCommande.quantite AS quantité, menuDuJour.nom AS menu, utilisateur.prenom AS prenomLivreur, utilisateur.nom AS nomLivreur
+FROM plat
+INNER JOIN lignePlatCommande
+ON plat.id = lignePlatCommande.plat_id
+INNER JOIN commande
+ON lignePlatCommande.commande_id = commande.id 
+INNER JOIN lignePlatMenuDuJour
+on plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+INNER JOIN livreur
+ON commande.livreur_id = livreur.id
+INNER JOIN utilisateur
+ON livreur.utilisateur_id = utilisateur.id
+WHERE commande.date = "2020-10-04"
+
+
+les plats avec leurs quantité et le menu de la commande en date du "2020-10-04" avec le nom-prenom du livreur (intégre les "livreur" qui sont a "null")
+------------------------------------------------------------------------------------------------------------- 
+SELECT plat.nom AS plat, lignePlatCommande.quantite AS quantité, menuDuJour.nom AS menu, utilisateur.prenom AS prenomLivreur, utilisateur.nom AS nomLivreur
+FROM plat
+INNER JOIN lignePlatCommande
+ON plat.id = lignePlatCommande.plat_id
+INNER JOIN commande
+ON lignePlatCommande.commande_id = commande.id 
+INNER JOIN lignePlatMenuDuJour
+on plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+LEFT JOIN livreur
+ON commande.livreur_id = livreur.id
+LEFT JOIN utilisateur
+ON livreur.utilisateur_id = utilisateur.id
+WHERE commande.date = "2020-10-04"
+
+les plats avec leurs quantité et le menu de la commande en date du 2020-10-04 avec le nom-prenom du client
+------------------------
+SELECT plat.nom AS plat, lignePlatCommande.quantite AS quantité, menuDuJour.nom AS menu, utilisateur.prenom AS prenomClient, utilisateur.nom AS nomClient
+FROM plat
+INNER JOIN lignePlatCommande
+ON plat.id = lignePlatCommande.plat_id
+INNER JOIN commande
+ON lignePlatCommande.commande_id = commande.id 
+INNER JOIN lignePlatMenuDuJour
+on plat.id = lignePlatMenuDuJour.plat_id
+INNER JOIN menuDuJour
+ON lignePlatMenuDuJour.menuDuJour_id = menuDuJour.id
+LEFT JOIN client
+ON commande.client_id = client.id
+LEFT JOIN utilisateur
+ON client.utilisateur_id = utilisateur.id
+WHERE commande.date = "2020-10-04"
+
+liste des stocks actuel du livreur 2
+--------------------------------------
+SELECT plat.id, plat.nom, stockPlatLivreur.quantiteActuel
+FROM plat
+INNER JOIN stockPlatLivreur
+ON plat.id = stockPlatLivreur.plat_id
+WHERE stockPlatLivreur.livreur_id = 2
+
+le stocks actuel du livreur 2 du plat 4
+-------------------------------------
+SELECT plat.id AS platId, plat.nom AS nomDuPlat, stockPlatLivreur.quantiteActuel
+FROM plat
+INNER JOIN stockPlatLivreur
+ON plat.id = stockPlatLivreur.plat_id
+WHERE stockPlatLivreur.livreur_id = 2 and plat.id = 4
+
+liste des stocks actuel du plat 2
+-------------------------------
+SELECT plat.id AS platId, plat.nom AS nomDuPlat, stockPlatLivreur.quantiteActuel
+FROM plat
+INNER JOIN stockPlatLivreur
+ON plat.id = stockPlatLivreur.plat_id
+WHERE plat.id = 2
+
+------------------------------------------------------------
+liste des stocks actuel du plat 2 avec le nom des livreurs
+----------------------------------------------------------
+SELECT   utilisateur.prenom AS prenomLivreur, utilisateur.nom AS nomLivreur, stockPlatLivreur.quantiteActuel, plat.nom AS nomDuPlat, plat.id AS platId
+FROM plat
+INNER JOIN stockPlatLivreur
+ON plat.id = stockPlatLivreur.plat_id
+INNER JOIN livreur
+ON stockPlatLivreur.livreur_id = livreur.id
+INNER JOIN utilisateur
+ON livreur.utilisateur_id = utilisateur.id
+WHERE plat.id = 2
+
+--------------------------------------------------------
+liste des commandes qui ont ete "payer" le "2020-09-24"
+--------------------------------------------------------
+SELECT commande.id AS idCommande, statutDeLaCommande.statut
+FROM commande
+INNER JOIN statutDeLaCommande
+ON commande.statutDeLaCommande_id = statutDeLaCommande.id
+WHERE statutDeLaCommande.statut = 'payer' AND commande.date = '2020-09-24'
+
+------------------------------------------------
+statut des livreur
+------------------------------------------------
+SELECT utilisateur.id AS utilisateurId, livreur.id AS livreurId, utilisateur.prenom AS prenomLivreur, utilisateur.nom AS nomLivreur, livreur.statut
+FROM utilisateur
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+WHERE livreur.statut =  'en livraison'
+
+
+------------------------------------------------
+liste des livreur qui sont en "livraison" 
+------------------------------------------------
+SELECT utilisateur.id AS utilisateurId, livreur.id AS livreurId, utilisateur.prenom AS prenomLivreur, utilisateur.nom AS nomLivreur, livreur.statut, geolocalisation.longitude, geolocalisation.latitude, MAX(geolocalisation.date)
+FROM utilisateur
+INNER JOIN livreur
+ON utilisateur.id = livreur.utilisateur_id
+INNER JOIN geolocalisation
+ON livreur.id = geolocalisation.livreur_id
+WHERE livreur.statut =  'en livraison'
+GROUP BY utilisateur.nom
+
+-----------------------
+descriptif de la commande 2 avec ses tarifs :
+------------------------
+SELECT plat.id AS platId, plat.nom, lignePlatCommande.quantite, tarifPlat.prix, lignePlatCommande.quantite * tarifPlat.prix AS total 
+FROM commande
+INNER JOIN lignePlatCommande
+ON commande.id = lignePlatCommande.commande_id
+INNER JOIN plat
+ON lignePlatCommande.plat_id = plat.id
+INNER JOIN tarifPlat
+ON plat.tarifPlat_id = tarifPlat.id
+WHERE commande.id = 2
+
+-------------------------------
+montant total de la commande 2:
+-------------------------------
+SELECT SUM(lignePlatCommande.quantite * tarifPlat.prix) AS total 
+FROM commande
+INNER JOIN lignePlatCommande
+ON commande.id = lignePlatCommande.commande_id
+INNER JOIN plat
+ON lignePlatCommande.plat_id = plat.id
+INNER JOIN tarifPlat
+ON plat.tarifPlat_id = tarifPlat.id
+WHERE commande.id = 2
+
+----------------------------------------------------------------
+descriptif des commandes en date du "2020-10-24" avec ses tarifs :
+-----------------------------------------------------------------
+SELECT plat.id AS platId, plat.nom, lignePlatCommande.quantite, tarifPlat.prix, lignePlatCommande.quantite * tarifPlat.prix AS total 
+FROM commande
+INNER JOIN lignePlatCommande
+ON commande.id = lignePlatCommande.commande_id
+INNER JOIN plat
+ON lignePlatCommande.plat_id = plat.id
+INNER JOIN tarifPlat
+ON plat.tarifPlat_id = tarifPlat.id
+WHERE commande.date = '2020-10-24'
+
+------------------------------------------------------
+montant total des commande en date du "2020-10-24" :
+-----------------------------------------------------
+SELECT SUM(lignePlatCommande.quantite * tarifPlat.prix) AS total 
+FROM commande
+INNER JOIN lignePlatCommande
+ON commande.id = lignePlatCommande.commande_id
+INNER JOIN plat
+ON lignePlatCommande.plat_id = plat.id
+INNER JOIN tarifPlat
+ON plat.tarifPlat_id = tarifPlat.id
+WHERE commande.date = '2020-10-24'
+
